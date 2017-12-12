@@ -1,5 +1,15 @@
 import csv
 import string
+import psycopg2
+import connectToDB
+
+host = 'localhost'
+dbname = 'storaverkefnid'
+user = 'postgres'
+password = '_Crossfit10'
+
+conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
+conn_string = conn_string.format(host, dbname, user, password)
 
 def csvReader():
 	text = csv.reader(open("jeopardy2.csv", encoding="utf8"))
@@ -15,6 +25,9 @@ def csvReader():
 myList = csvReader()
 #print(myList[37])
 
+print("Lets try to connect to the Dbfile")
+cursor, conn = connectToDB.connect_to_database(host, dbname, user, password)
+print("Hey I made it here")
 categories = set()
 rounds = set()
 shownumbers = set()
@@ -57,6 +70,8 @@ for item in myList:
 	else:
 		temp = str.replace(temp, ',', '')
 	value = int(temp)
-	f.write("insert into dbo.jeopardy (shownumber, airdate, rounds, categories, valueindollars, question, answer) values({},'{}','{}','{}',{},'{}','{}' );\n".format(item[0], item[1], item[2], cat, value, question, answer))
+	f.write("insert into jeopardy (shownumber, airdate, rounds, categories, valueindollars, question, answer) values({},'{}','{}','{}',{},'{}','{}' );\n".format(item[0], item[1], item[2], cat, value, question, answer))
 
 	
+cursor.close()
+conn.close()
