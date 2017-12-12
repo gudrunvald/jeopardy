@@ -1,51 +1,71 @@
 import pandas as pd
+import os
 from textblob import TextBlob as tb
+#########
+import psycopg2
 
+host = 'localhost'
+dbname = 'storaverkefnid'
+user = ''
+password = ''
+
+conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
+
+conn_string = conn_string.format(host, dbname, user, password)
+
+try:
+    conn = psycopg2.connect(conn_string)
+except psycopg2.OperationalError as e:
+    print('Connection failed!')
+    print('Error message: ', e)
+    exit()
+
+cursor = conn.cursor()
+
+spurning = input('Question: ')
+
+s = """select question,id
+from jeopardy;"""
+
+values = [spurning,]
+
+query = cursor.mogrify(s, values)
+
+print(query)
+
+cursor.execute(query)
+
+try:
+    records = cursor.fetchall()
+    print('Question {} are: '.format(spurning))
+    for i in records:
+        print(i[0])
+
+except:
+    print('no records')
+
+conn.commit()
+cursor.close()
+conn.close()
+#################
 
 data = pd.read_csv("jeopardy_first_1000.csv", engine='python', encoding="utf8")
-pd.set_option('display.max_colwidth', 4000) # til að birta alla spurninguna
-pd.set_option('display.max_rows', 250000) # til að birta allar línur en ekki bara fyrstu og síðustu
+pd.set_option('display.max_colwidth', 4000) # til ad birta spurningarnar í heild
+pd.set_option('display.max_rows', 250000) # til ad birta allar línur en ekki bara fyrstu og sídustu
 
-#print(data.head(250000).loc[:, ['Question']])
-#print(data.loc[:, ['Category']])
+if os.path.exists('noun_list.csv'):
+    os.remove('noun_list.csv')
 
-blob = tb(str(data.head(250000).loc[:, ['Question']]))
+f = open('noun_list.csv', 'a')
 
-#blob = tb(str(data.head(250000).loc[:, ['Answer']]))
-#print(blob)
-#print(blob.noun_phrases)
-
-
-f = open('noun_list.csv', 'w')
-#print(blob.noun_phrases)
-for word in blob.noun_phrases:
-#    f.write(word + "\n")
-#þetta er ekki að skila því sem ég vil, en set þetta hér til að það sé eitthvað í gangi :)
-    print(word + " - " + str(blob.word_counts[word]))
-blob = tb(str(data.head(100).loc[:, ['Category']]))
-print(blob)
-
-listofcats = []
-for i in blob.noun_phrases:
-	listofcats.append(i)
-
-print('listofcats ', listofcats)
-#print(listofcats[3])
-
-f = open('noun_list.csv', 'w')
-
-mostcommonword = ''
-wordcount = 0
-
-#print(blob.noun_phrases)
-for word in listofcats:
-#    f.write(word + "\n")
-#þetta er ekki að skila því sem ég vil, en set þetta hér til að það sé eitthvað í gangi :
-	#print(word + " - " + str(blob.word_counts[word]))
-	if int(blob.words.count(word)) > int(wordcount):
-		mostcommonword = word
-
-print('mostcommonword: ', mostcommonword, wordcount)
-
+for index, row in data.iterrows():
+    #í staðinn fyrir str(row['Question']) vil ég sækja í gagnagrunninn
+    rowblob = tb(str(row['Question']))
+    #print(rowblob.noun_phrases)
+    for word in rowblob.noun_phrases:
+        f.write(word + "\n")
+    for tag in rowblob.tags:
+        if tag[1] == 'NN' or tag[1] == 'NNP' or tag[1] == 'NNS':
+            f.write(tag[0] + "\n")
 
 f.close()
