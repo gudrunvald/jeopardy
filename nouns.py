@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 from textblob import TextBlob as tb
-#########
 import psycopg2
+import csv
 
 host = 'localhost'
 dbname = 'storaverkefnid'
@@ -22,50 +22,45 @@ except psycopg2.OperationalError as e:
 
 cursor = conn.cursor()
 
-spurning = input('Question: ')
+questionSet = set()
+questionsList = []
 
-s = """select question,id
-from jeopardy;"""
+#206406
+for item in range(2, 206406):
+    s = """select id, question from jeopardy where id=""" + str(item) + """;"""
+    query = cursor.mogrify(s)
+    cursor.execute(query)
 
-values = [spurning,]
-
-query = cursor.mogrify(s, values)
-
-print(query)
-
-cursor.execute(query)
-
-try:
-    records = cursor.fetchall()
-    print('Question {} are: '.format(spurning))
-    for i in records:
-        print(i[0])
-
-except:
-    print('no records')
+    try:
+        records = cursor.fetchall()
+        for i in records:
+            questionSet.add(i)
+    except:
+        print('no records')
 
 conn.commit()
 cursor.close()
 conn.close()
 #################
 
-data = pd.read_csv("jeopardy_first_1000.csv", engine='python', encoding="utf8")
-pd.set_option('display.max_colwidth', 4000) # til ad birta spurningarnar í heild
-pd.set_option('display.max_rows', 250000) # til ad birta allar línur en ekki bara fyrstu og sídustu
+#data = pd.read_csv("jeopardy_first_1000.csv", engine='python', encoding="utf8")
+#pd.set_option('display.max_colwidth', 40) # til ad birta spurningarnar í heild
+#pd.set_option('display.max_rows', 250000) # til ad birta allar línur en ekki bara fyrstu og sídustu
 
-if os.path.exists('noun_list.csv'):
-    os.remove('noun_list.csv')
-
-f = open('noun_list.csv', 'a')
-
-for index, row in data.iterrows():
-    #í staðinn fyrir str(row['Question']) vil ég sækja í gagnagrunninn
-    rowblob = tb(str(row['Question']))
-    #print(rowblob.noun_phrases)
+tempList = list(questionSet)
+# sækir nafnliði, svo nafnorð
+for index in tempList:
+    item = index[1].lower()
+    rowblob = tb(item)
     for word in rowblob.noun_phrases:
-        f.write(word + "\n")
+        questionsList.append((index[0], word))
     for tag in rowblob.tags:
-        if tag[1] == 'NN' or tag[1] == 'NNP' or tag[1] == 'NNS':
-            f.write(tag[0] + "\n")
+        if tag[1] == 'NN' or tag[1] == 'NNS':
+            questionsList.append((index[0], tag[0]))
+
+with open("out.csv","w") as g:
+    wr = csv.writer(g,delimiter=";")
+    for value in questionsList:
+        wr.writerow(value)
 
 f.close()
