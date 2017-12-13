@@ -1,8 +1,70 @@
+-- Hlutfallið milli Íslands og Danmerkur
+select (select count(question)
+from jeopardy
+where question like '%Iceland%')/(SELECT count(question)
+from jeopardy
+where question like '%Denmark%')::float;
+
+-- Fjöldi frægra karla og kvenna
+SELECT (select count(gender)
+FROM persons
+WHERE gender like '%male%') as Males,
+(SELECT count(gender)
+from persons
+where gender like '%female%') as Females;
+
+--- Listi af spurningum að virði 2000
+select question, valueindollars
+from jeopardy
+where valueindollars = 2000
+GROUP BY question, valueindollars;
+
+--- Spurningar með gap
+SELECT question
+from jeopardy
+WHERE question LIKE '%\_\_\_\_%';
+
+--- Fjöldi spurninga um Norðurlöndin
+SELECT
+  count(*) FILTER (WHERE question like '%Iceland%') as Iceland
+, count(*) FILTER (WHERE question like '%Denmark%') as Denmark
+, count(*) FILTER (WHERE question like '%Finland%') as Finland
+, count(*) FILTER (WHERE question like '%Sweden%') as Sweden
+, count(*) FILTER (WHERE question like '%Norway%') as Norway
+, count(*) FILTER (WHERE question like '%Faroe Islands%') as Faroe_Islands
+FROM jeopardy;
+
+--Hvaða orð kemur oftast fyrir í svörum með 2 orð
+SELECT answernoun, count(answernoun)
+FROM answernouns
+WHERE answernoun like '% %'
+GROUP BY answernoun
+ORDER BY count(answernoun) DESC;
+
+--Hvaða orð kemur oftast fyrir í svörum með 1 orð
+SELECT answernoun, count(answernoun)
+FROM answernouns
+GROUP BY answernoun
+ORDER BY count(answernoun) DESC;
+
+--Hvaða orð kemur oftast fyrir í spurningum með 2 orð
+SELECT questionnoun, count(questionnoun)
+FROM questionnouns
+WHERE questionnoun like '% %'
+GROUP BY questionnoun
+ORDER BY count(questionnoun) DESC; 
+
+--Hvaða orð kemur oftast fyrir í spurningum með 1 orð
+SELECT questionnoun, count(questionnoun)
+FROM questionnouns
+GROUP BY questionnoun
+ORDER BY count(questionnoun) DESC;
+
 SELECT * FROM jeopardy;
 
 SELECT * FROM categories;
 
--- Allar spurningar um ísland
+-- Allar spurningar um Ísland
 SELECT question, answer, categories
 FROM jeopardy
 WHERE lower(question) LIKE '%iceland%'
@@ -101,23 +163,12 @@ FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE p.person LIKE a.answer AND p.gender = 'female');
 
--- Fjöldi frægra karla og kvenna
-SELECT
-(SELECT count(gender)
-FROM persons
-WHERE gender = 'male') AS males,
-  (SELECT count(gender)
-  FROM persons
-  WHERE gender = 'female') AS females;
-
 -- Finna svör sem eru ártöl
 SELECT question, (answer)::INT
 FROM jeopardy
 WHERE lower(question) LIKE '%year%'
 AND jeopardy.answer ~* '^-?[1-9]\d*$'
 ORDER BY answer;
---'^\d{4}$';
---'^-?[1-9]\d*$'
 
 -- Algengustu ártölin
 SELECT (answer)::INT, count(answer)
@@ -132,6 +183,8 @@ SELECT answer, question, categories, rounds
 FROM jeopardy
 WHERE lower(answer) LIKE '%leif ericson%'
 OR lower(question) LIKE '%leif ericson%';
+
+
 
 
 
