@@ -133,7 +133,6 @@ FROM jeopardy
 WHERE lower(answer) LIKE '%leif ericson%'
 OR lower(question) LIKE '%leif ericson%';
 
-
 -- Hvaða persóna kemur oftast fyrir í svörum
 SELECT a.answer AS Celeb_in_answer, p.person, count(p.person)
 FROM jeopardy a, persons p

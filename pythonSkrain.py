@@ -4,15 +4,15 @@ import psycopg2
 import connectToDB
 
 host = 'localhost'
-dbname = 'storaverkefnid'   #Setjið inn ykkar dbname 
-user = 'postgres'           #Setjið inn ykkar username
-password = '********'     #Setjið inn ykkar password
+dbname = 'hopverk'   #Setjið inn ykkar dbname 
+user = ''           #Setjið inn ykkar username
+password = ''     #Setjið inn ykkar password
 
 conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
 conn_string = conn_string.format(host, dbname, user, password)
 
 def csvReader():
-    text = csv.reader(open("out.csv", encoding="utf8"))
+    text = csv.reader(open("out_answers.csv", encoding="utf8"))
     returnList = []
     counter = 0
     for row in text:
@@ -26,10 +26,9 @@ print(myList[0])
 
 cursor, conn = connectToDB.connect_to_database(host, dbname, user, password)
 
-'''
 numberOfRowsToInsert = 2000
 counter = 0
-insertString = "insert into questionnouns (questionnoun, jeopardyId) values "
+insertString = "insert into answernouns (answernoun, jeopardyId) values "
 values = ''
 for item in myList:
 
@@ -52,7 +51,7 @@ if counter > 0:
 #categories = set()
 #rounds = set()
 #shownumbers = set()
-'''
+
 
 '''
 for item in myList:
