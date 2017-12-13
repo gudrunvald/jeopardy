@@ -82,3 +82,60 @@ FROM jeopardy
 WHERE answer LIKE (SELECT person
   FROM persons
   WHERE lower(gender) = 'male');
+
+-- Meðalvirði svara sem innihalda fræga persónu er 619.962
+SELECT avg(a.valueindollars)
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE p.person LIKE a.answer);
+
+-- Meðalverð fyrir fræga karlmenn er 617.450
+SELECT avg(a.valueindollars)
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE p.person LIKE a.answer AND p.gender = 'male');
+
+-- Meðalverð fyrir frægar konur er 623.419
+SELECT avg(a.valueindollars)
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE p.person LIKE a.answer AND p.gender = 'female');
+
+-- Fjöldi frægra karla og kvenna
+SELECT
+(SELECT count(gender)
+FROM persons
+WHERE gender = 'male') AS males,
+  (SELECT count(gender)
+  FROM persons
+  WHERE gender = 'female') AS females;
+
+-- Finna svör sem eru ártöl
+SELECT question, (answer)::INT
+FROM jeopardy
+WHERE lower(question) LIKE '%year%'
+AND jeopardy.answer ~* '^-?[1-9]\d*$'
+ORDER BY answer;
+--'^\d{4}$';
+--'^-?[1-9]\d*$'
+
+-- Algengustu ártölin
+SELECT (answer)::INT, count(answer)
+FROM jeopardy
+WHERE lower(question) LIKE '%year%'
+AND answer ~*'^-?[1-9]\d*$'
+GROUP BY answer
+ORDER BY count(answer) DESC;
+
+-- Leita af ákveðnu orði í spurningu eða svari
+SELECT answer, question, categories, rounds
+FROM jeopardy
+WHERE lower(answer) LIKE '%leif ericson%'
+OR lower(question) LIKE '%leif ericson%';
+
+
+
+
+
+
+
