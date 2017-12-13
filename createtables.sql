@@ -25,6 +25,20 @@ create table jeopardy (
 	primary key(id)
 );
 
+create table questionnouns (
+	id Serial,
+	questionnoun varchar,
+	jeopardyId int,
+	primary key(id)
+);
+
+create table answernouns (
+	id Serial,
+	answernoun varchar,
+	jeopardyId int,
+	primary key(id)
+);
+
 create table persons (
 	person varchar(250),
 	gender varchar(50),
