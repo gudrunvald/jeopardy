@@ -44,3 +44,11 @@ create table persons (
 	gender varchar(50),
 	primary key(person)
 );
+
+create table sentiments (
+	id Serial,
+	polarity decimal,
+	subjectivity decimal,
+	jeopardyId int,
+	primary key(id)
+);

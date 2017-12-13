@@ -4,9 +4,15 @@ import psycopg2
 import connectToDB
 
 host = 'localhost'
+<<<<<<< HEAD
 dbname = 'hopverk'   #Setjið inn ykkar dbname 
 user = ''           #Setjið inn ykkar username
 password = ''     #Setjið inn ykkar password
+=======
+dbname = 'storaverkefnid'   #Setjið inn ykkar dbname 
+user = 'postgres'           #Setjið inn ykkar username
+password = '*********'     #Setjið inn ykkar password
+>>>>>>> d4b2dc8d1bdc5768cc6963bbb6ba6302caa76dd6
 
 conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
 conn_string = conn_string.format(host, dbname, user, password)
@@ -21,8 +27,6 @@ def csvReader():
     return returnList
 
 myList = csvReader()
-print(myList[0])
-
 
 cursor, conn = connectToDB.connect_to_database(host, dbname, user, password)
 
@@ -47,6 +51,7 @@ if counter > 0:
     cursor.execute(insertString + values)
     values = ''
     counter = 0
+'''
 
 #categories = set()
 #rounds = set()
