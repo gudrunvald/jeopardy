@@ -6,7 +6,7 @@ import connectToDB
 host = 'localhost'
 dbname = 'storaverkefnid'
 user = 'postgres'
-password = '_Crossfit10'
+password = '**********'
 
 conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
 conn_string = conn_string.format(host, dbname, user, password)

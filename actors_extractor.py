@@ -3,76 +3,78 @@ import string
 import psycopg2
 import connectToDB
 
-g = open('actors_insert_commands.sql', 'w')
-unwanteds = """,\"_ \-\/'\" __.\""""
-
-######################################################
-# Connect to DB
-
 host = 'localhost'
-dbname = 'hopverk'   	#Setjið inn ykkar dbname 
-user = ''           	#Setjið inn ykkar username
-password = ''     		#Setjið inn ykkar password
+dbname = 'storaverkefnid'   	#Setjið inn ykkar dbname 
+user = 'postgres'           	#Setjið inn ykkar username
+password = '**********'     		#Setjið inn ykkar password
+
+
+def csvReaderMale():
+    text = csv.reader(open("actors.csv", encoding="utf8"))
+    returnList = []
+    counter = 0
+    for row in text:
+    	if counter == 0:
+    		counter+=1
+    	else:
+	    	temp = row[1]
+    		returnList.append(temp)
+    return returnList
+
+def csvReaderFemale():
+    text = csv.reader(open("actresses.csv", encoding="utf8"))
+    returnList = []
+    counter = 0
+    for row in text:
+    	if counter == 0:
+    		counter+=1
+    	else:
+    		temp = row[1]
+    		returnList.append(temp)
+    return returnList
 
 conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
 conn_string = conn_string.format(host, dbname, user, password)
 cursor, conn = connectToDB.connect_to_database(host, dbname, user, password)
 
-######################################################
-# Actors
-f = open('actors.csv')
-reader = csv.DictReader(f)
+maleList = csvReaderMale()
+femaleList = csvReaderFemale()
+personsSet = set()
 
-actors_data = []
-for i in reader:
-	actors_data.append(i)
-f.close()
+numberOfRowsToInsert = 1000
+counter = 0
+insertString = "insert into persons (person, gender) values "
+values = ''
 
-actors_set = set()
-for i in actors_data:
-	name = i['title']
-	name = name.replace('_', ' ')
-	name = name.replace("'", "´")
-	name = name.strip(unwanteds)
-	actors_set.add(name)
+for item in maleList:
+	personsSet.add((item, "male"))
+for item in femaleList:
+	personsSet.add((item, "female"))
 
-print('Actors: ', actors_set)
-for a in actors_set:
-	g.write("insert into persons(person, gender) values ('{}', '{}');\n".format(a, 'male'))
+#print(personsSet)
+listOfPersons = list(personsSet)
+print(listOfPersons[0][0])
 
-######################################################
-# Actresses
-a = open('actresses.csv')
-reader = csv.DictReader(a)
+for item in listOfPersons:
+    temp = item[0].replace("'", "''")
+    if len(values) > 0:
+        values = values + ","
+    values = values + "('{}','{}')".format(temp, item[1])
+    counter += 1
 
-actresses_data = []
-for i in reader:
-	actresses_data.append(i)
-a.close()
+    if counter == numberOfRowsToInsert:
+        cursor.execute(insertString + values)
+        values = ''
+        counter = 0
 
-actresses_set = set()
-for i in actresses_data:
-	name = i['title']
-	name = name.replace('_', ' ')
-	name = name.replace("'", "´")
-	name = name.strip(unwanteds)
-	actresses_set.add(name)
+if counter > 0:
+    cursor.execute(insertString + values)
+    values = ''
+    counter = 0
 
-print('Actresses: ', actresses_set)
-for a in actresses_set:
-	g.write("insert into persons(person, gender) values ('{}', '{}');\n".format(a, 'female'))
-
-######################################################
-# Execute the insert lines
-
-
-
-######################################################
-# Close all connections
 conn.commit()
 cursor.close()
 conn.close()
-g.close()
 
 
 
