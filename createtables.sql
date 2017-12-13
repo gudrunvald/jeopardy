@@ -38,3 +38,9 @@ create table answernouns (
 	jeopardyId int,
 	primary key(id)
 );
+
+create table persons (
+	person varchar(250),
+	gender varchar(50),
+	primary key(person)
+);
