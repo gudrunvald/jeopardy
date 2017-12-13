@@ -24,3 +24,17 @@ create table jeopardy (
 	answer varchar,
 	primary key(id)
 );
+
+create table questionnouns (
+	id Serial,
+	questionnoun varchar,
+	jeopardyId int,
+	primary key(id)
+);
+
+create table answernouns (
+	id Serial,
+	answernoun varchar,
+	jeopardyId int,
+	primary key(id)
+);

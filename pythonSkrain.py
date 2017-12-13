@@ -6,7 +6,7 @@ import connectToDB
 host = 'localhost'
 dbname = 'storaverkefnid'   #Setjið inn ykkar dbname 
 user = 'postgres'           #Setjið inn ykkar username
-password = '**********'     #Setjið inn ykkar password
+password = '_Crossfit10'     #Setjið inn ykkar password
 
 conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
 conn_string = conn_string.format(host, dbname, user, password)
@@ -39,8 +39,9 @@ for item in myList:
 
 
 catLength = len(categories)
-print(len(rounds))
+#print(len(rounds))
 
+'''
 numberOfRowsToInsert = 2000
 counter = 0
 insertCatString = "insert into categories (category) values " 
@@ -139,6 +140,30 @@ if counter > 0:
     cursor.execute(insertRoundString + jeopardyValues)
     jeopardyValues = ''
     counter = 0
+
+'''
+
+questionSet = set()
+
+#216920
+spurning = input('Question: ')
+for item in range(2, 216920):
+    s = """select id, question from jeopardy where id=""" + str(item) + """;"""
+    #print(s)
+    values = [spurning,]
+    query = cursor.mogrify(s, values)
+    #print(query)
+    cursor.execute(query)
+
+    try:
+        records = cursor.fetchall()
+        for i in records:
+            questionSet.add(i)
+
+    except:
+        print('no records')
+
+print(questionSet)
 
 conn.commit()
 cursor.close()
