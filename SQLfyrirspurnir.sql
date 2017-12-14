@@ -251,12 +251,13 @@ FROM jeopardy
 WHERE lower(answer) LIKE '%leif ericson%'
 OR lower(question) LIKE '%leif ericson%';
 
--- Algengustu persónurnar
-SELECT (answer)::INT, count(answer)
+-- Algengustu leikararnir
+SELECT answer, count(answer)
 FROM jeopardy
-WHERE lower(question) LIKE '%year%'
-AND answer ~*'^-?[1-9]\d*$'
-GROUP BY answer
+WHERE answer LIKE (
+  SELECT p.person FROM persons p
+  WHERE p.person LIKE jeopardy.answer)
+GROUP BY jeopardy.answer
 ORDER BY count(answer) DESC;
 
 -- Öll svör og spurningar sem innihalda fræga persónu
