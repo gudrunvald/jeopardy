@@ -4,15 +4,9 @@ import psycopg2
 import connectToDB
 
 host = 'localhost'
-<<<<<<< HEAD
 dbname = 'hopverk'   #Setjið inn ykkar dbname 
 user = ''           #Setjið inn ykkar username
 password = ''     #Setjið inn ykkar password
-=======
-dbname = 'storaverkefnid'   #Setjið inn ykkar dbname 
-user = 'postgres'           #Setjið inn ykkar username
-password = '*********'     #Setjið inn ykkar password
->>>>>>> d4b2dc8d1bdc5768cc6963bbb6ba6302caa76dd6
 
 conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
 conn_string = conn_string.format(host, dbname, user, password)
@@ -34,8 +28,9 @@ numberOfRowsToInsert = 2000
 counter = 0
 insertString = "insert into answernouns (answernoun, jeopardyId) values "
 values = ''
-for item in myList:
 
+'''
+for item in myList:
     item[1] = item[1].replace("'", "''")
     if len(values) > 0:
         values = values + ","
@@ -51,25 +46,21 @@ if counter > 0:
     cursor.execute(insertString + values)
     values = ''
     counter = 0
-'''
+
 
 #categories = set()
 #rounds = set()
 #shownumbers = set()
 
-
-'''
 for item in myList:
     shownumbers.add(item[0])
     rounds.add(item[2])
     categories.add(item[3])
-'''
-
 
 #catLength = len(categories)
 #print(len(rounds))
 
-'''
+
 numberOfRowsToInsert = 2000
 counter = 0
 insertCatString = "insert into categories (category) values " 
@@ -93,7 +84,6 @@ if counter > 0:
     counter = 0
 
 
-
 numberOfRoundsToInsert = 4
 roundValues = ''
 insertRoundString = "insert into rounds (round) values "
@@ -114,7 +104,6 @@ if counter > 0:
     cursor.execute(insertRoundString + roundValues)
     roundValues = ''
     counter = 0
-
 
 
 numberOfShowsToInsert = 1000
@@ -168,9 +157,7 @@ if counter > 0:
     cursor.execute(insertRoundString + jeopardyValues)
     jeopardyValues = ''
     counter = 0
-
 '''
-
 
 
 conn.commit()
