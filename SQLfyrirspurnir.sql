@@ -291,4 +291,31 @@ where c.name like (select j.question from jeopardy j
 where question like c.name)
 group by j.question, c.name;
 
+-- Meðalvirði svara sem innihalda creep er
+-- 721.970
+SELECT avg(a.valueindollars)
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.name FROM creeps p
+WHERE p.name LIKE a.answer);
 
+-- Leita að creeps í svörum og spurningum - virkar
+SELECT j.answer, j.question, j.categories, j.valueindollars
+FROM jeopardy j
+WHERE j.answer LIKE (
+  SELECT a.name
+  FROM creeps a
+  WHERE a.name LIKE j.answer)
+OR j.question LIKE (
+  SELECT a.name
+  FROM creeps a
+  WHERE a.name LIKE j.question);
+
+-- Algengustu creepin
+-- Guðrún: Sylvester Stallone	22
+SELECT answer, count(answer)
+FROM jeopardy
+WHERE answer LIKE (
+  SELECT p.name FROM creeps p
+  WHERE name LIKE jeopardy.answer)
+GROUP BY jeopardy.answer
+ORDER BY count(answer) DESC;
