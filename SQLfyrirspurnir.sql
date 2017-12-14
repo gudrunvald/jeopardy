@@ -1,3 +1,10 @@
+-- Airdate raðað eftir ári
+SELECT airdate
+  FROM jeopardy
+WHERE airdate ~* '[0-9][0-9]/[0-9][0-9]/*'
+GROUP BY airdate
+ORDER BY substring(airdate, 6, 9);
+
 -- Hlutfallið milli Íslands og Danmerkur
 select (select count(question)
 from jeopardy
@@ -184,11 +191,28 @@ FROM jeopardy
 WHERE lower(answer) LIKE '%leif ericson%'
 OR lower(question) LIKE '%leif ericson%';
 
+-- Algengustu persónurnar
+SELECT (answer)::INT, count(answer)
+FROM jeopardy
+WHERE lower(question) LIKE '%year%'
+AND answer ~*'^-?[1-9]\d*$'
+GROUP BY answer
+ORDER BY count(answer) DESC;
 
+-- Öll svör og spurningar sem innihalda fræga persónu
+SELECT a.answer AS Celeb_in_answer, p.person, count(p.person)
+FROM jeopardy a, persons p
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE person LIKE a.answer)
+  OR
+  a.question LIKE (SELECT p.person FROM persons p
+WHERE person LIKE a.question)
+GROUP BY p.person, a.answer;
 
-
-
-
-
+-- Öll svör sem innihalda fræga persónu
+SELECT a.answer AS Celeb_in_answer, p.person, count(p.person)
+FROM jeopardy a, persons p
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE person LIKE a.answer);
 
 
