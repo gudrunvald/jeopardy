@@ -173,6 +173,7 @@ WHERE lower(answer) LIKE '%meryl streep%';
 
 -- Meðalvirði svara fyrir karlkyns leikara
 -- Ingimar: fæ error
+-- Margrét: fæ ERROR!!!!!!!!!
 SELECT avg(valueindollars) AS Average_value_for_morgan_freeman
 FROM jeopardy
 WHERE answer LIKE (SELECT person
@@ -215,6 +216,7 @@ ORDER BY answer;
 
 -- Algengustu ártölin
 -- Ingimar: 2000
+-- Margrét: 2000
 SELECT (answer)::INT, count(answer)
 FROM jeopardy
 WHERE lower(question) LIKE '%year%'
