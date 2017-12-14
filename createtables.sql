@@ -52,3 +52,8 @@ create table sentiments (
 	jeopardyId int,
 	primary key(id)
 );
+
+create table creeps (
+	name varchar(250),
+	primary key(name)
+);
