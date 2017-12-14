@@ -1,6 +1,3 @@
-<<<<<<< HEAD
--- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
-=======
 -- Airdate raðað eftir ári
 SELECT airdate
   FROM jeopardy
@@ -8,8 +5,7 @@ WHERE airdate ~* '[0-9][0-9]/[0-9][0-9]/*'
 GROUP BY airdate
 ORDER BY substring(airdate, 6, 9);
 
--- Hlutfallið milli Íslands og Danmerkur
->>>>>>> d1ea185e12013befeac8b62c478a999826047887
+-- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
 select (select count(question)
 from jeopardy
 where question like '%Iceland%')/(SELECT count(question)
@@ -186,6 +182,7 @@ WHERE answer LIKE (SELECT person
 -- Meðalvirði svara sem innihalda fræga persónu er 
 -- Guðrún: 619.962 
 -- Ingimar: 587.5
+--- Margrét: 587,5
 SELECT avg(a.valueindollars)
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
@@ -194,6 +191,7 @@ WHERE p.person LIKE a.answer);
 -- Meðalverð fyrir fræga karlmenn er 
 -- Guðrún: 617.450
 -- Ingimar: 647.619
+-- Margrét: 647.619
 SELECT avg(a.valueindollars)
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
