@@ -133,6 +133,27 @@ FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE person LIKE a.answer);
 
+-- Öll svör og spurningar sem innihalda fræga persónu
+SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
+FROM jeopardy a
+WHERE a.answer LIKE 
+(SELECT p.person FROM persons p
+WHERE person LIKE a.answer)
+OR a.question LIKE 
+(SELECT p2.person FROM persons p2
+WHERE person LIKE a.question);
+
+-- Öll svör og spurningar sem innihalda fræga persónu (create view til að geta leitað í því)
+CREATE VIEW famous_qa AS
+SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE person LIKE a.answer)
+OR a.question LIKE (
+  SELECT p2.person FROM persons p2
+  WHERE person LIKE a.question)
+ORDER BY a.answer;
+
 -- Öll svör sem innihalda karlkyns fræga persónu
 -- Ingimar: fyrsta row: "Liberace, this colorful..., MAY, 200"
 SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars

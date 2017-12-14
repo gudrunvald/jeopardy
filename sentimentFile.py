@@ -4,9 +4,9 @@ import psycopg2
 import connectToDB
 
 host = 'localhost'
-dbname = 'storaverkefnid'   	#Setjið inn ykkar dbname 
-user = 'postgres'           	#Setjið inn ykkar username
-password = '?????????'     		#Setjið inn ykkar password
+dbname = 'hopverk'   	#Setjið inn ykkar dbname 
+user = ''           	#Setjið inn ykkar username
+password = ''     		#Setjið inn ykkar password
 
 
 def csvReader():
