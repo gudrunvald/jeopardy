@@ -254,4 +254,20 @@ FROM jeopardy a, persons p
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE person LIKE a.answer);
 
+--- Listi yfir alla perra
+select name
+from creeps;
+
+---Listi yfir hversu margir perrar eru
+select count(name)
+from creeps;
+
+--- Hversu margar spurningar eru um hvern perra
+---ATHUGA FÆ ÞETTA EKKI RÉTT GETUR EINHVER HJÁLPAÐ MÉR
+select c.name as Creeps_in_question, j.question, count(j.question)
+from creeps c, jeopardy j
+where c.name like (select j.question from jeopardy j
+where question like c.name)
+group by j.question, c.name;
+
 
