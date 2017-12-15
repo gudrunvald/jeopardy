@@ -6,6 +6,7 @@ GROUP BY airdate
 ORDER BY substring(airdate, 6, 9);
 
 -- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
+-- Guðrún 0.711
 select (select count(question)
 from jeopardy
 where question like '%Iceland%')/(SELECT count(question)
@@ -14,6 +15,7 @@ where question like '%Denmark%')::float;
 
 -- Fjöldi frægra karla og kvenna 
 -- Ingimar: karlar = 16.277, konur = 7488
+-- Guðrún karlar = 16254, konur = 7477
 SELECT (select count(gender)
 FROM persons
 WHERE gender like '%male%') as Males,
