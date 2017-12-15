@@ -20,7 +20,7 @@ def csvReader1():
 	return returnList
 
 def csvReader2():
-	text = csv.reader(open("out.csv", encoding="utf8"))
+	text = csv.reader(open("out_questions.csv", encoding="utf8"))
 	returnList = []
 	counter = 0
 	for row in text:
