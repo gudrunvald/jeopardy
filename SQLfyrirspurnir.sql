@@ -5,6 +5,25 @@ WHERE airdate ~* '[0-9][0-9]/[0-9][0-9]/*'
 GROUP BY airdate
 ORDER BY substring(airdate, 6, 9);
 
+--- Fjöldi spurninga um Ísland og Danmörk
+select count(question)
+from jeopardy
+where question like '%Denmark%'
+UNION
+select count(question)
+from jeopardy
+where question like '%Iceland%';
+
+--- Fjöldi spurninga um Ísland og Danmörk
+select count(question)
+from jeopardy
+where question like '%Denmark%'
+UNION
+select count(question)
+from jeopardy
+where question like '%Iceland%';
+
+
 -- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
 -- Guðrún 0.711
 select (select count(question)
@@ -322,3 +341,21 @@ WHERE answer LIKE (
   WHERE name LIKE jeopardy.answer)
 GROUP BY jeopardy.answer
 ORDER BY count(answer) DESC;
+
+-- Mesta polarity í spurningum
+SELECT jeopardy.question, polarity 
+FROM sentiments, jeopardy 
+WHERE polarity > 0.8
+AND sentiments.id = jeopardy.id;
+
+-- Minnsta polarity í spurningum
+SELECT jeopardy.question, polarity 
+FROM sentiments, jeopardy 
+WHERE polarity < -0.8
+AND sentiments.id = jeopardy.id;
+
+-- Hlutdrægustu spurningarnar
+SELECT jeopardy.question, subjectivity 
+FROM sentiments, jeopardy 
+WHERE sentiments.subjectivity < 0.2
+AND sentiments.id = jeopardy.id;
