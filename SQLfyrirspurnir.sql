@@ -341,3 +341,21 @@ WHERE answer LIKE (
   WHERE name LIKE jeopardy.answer)
 GROUP BY jeopardy.answer
 ORDER BY count(answer) DESC;
+
+-- Mesta polarity í spurningum
+SELECT jeopardy.question, polarity 
+FROM sentiments, jeopardy 
+WHERE polarity > 0.8
+AND sentiments.id = jeopardy.id;
+
+-- Minnsta polarity í spurningum
+SELECT jeopardy.question, polarity 
+FROM sentiments, jeopardy 
+WHERE polarity < -0.8
+AND sentiments.id = jeopardy.id;
+
+-- Hlutdrægustu spurningarnar
+SELECT jeopardy.question, subjectivity 
+FROM sentiments, jeopardy 
+WHERE sentiments.subjectivity < 0.2
+AND sentiments.id = jeopardy.id;
