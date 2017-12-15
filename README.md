@@ -36,7 +36,7 @@ You could also skip questions of high negativity and those that ask about indivi
 * Run the create table sql commands from createtables.sql.
 
 #### Populate the tables
-* Run the python code from pythonSkrain.py to insert values into your tables
+* Run the python code from skilaPythonSkra.py to insert values into your tables
 
 #### SQL queries
 * All sql queries are in the file SQLfyrirspurnir.sql
