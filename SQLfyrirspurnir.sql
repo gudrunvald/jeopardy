@@ -46,12 +46,12 @@ Noregur: 136
 Færeyjar: 3
 */
 SELECT
-  count(*) FILTER (WHERE question like '%Iceland%') as Iceland
-, count(*) FILTER (WHERE question like '%Denmark%') as Denmark
-, count(*) FILTER (WHERE question like '%Finland%') as Finland
-, count(*) FILTER (WHERE question like '%Sweden%') as Sweden
-, count(*) FILTER (WHERE question like '%Norway%') as Norway
-, count(*) FILTER (WHERE question like '%Faroe Islands%') as Faroe_Islands
+  count(*) FILTER (WHERE question like '%Iceland%' OR answer LIKE '%Iceland%') as Iceland
+, count(*) FILTER (WHERE question like '%Denmark%' OR answer LIKE '%Denmark%') as Denmark
+, count(*) FILTER (WHERE question like '%Finland%' OR answer LIKE '%Finland%') as Finland
+, count(*) FILTER (WHERE question like '%Sweden%' OR answer LIKE '%Sweden%') as Sweden
+, count(*) FILTER (WHERE question like '%Norway%' OR answer LIKE '%Norway%') as Norway
+, count(*) FILTER (WHERE question like '%Faroe Islands%' OR answer LIKE '%Faroe Islands%') as Faroe_Islands
 FROM jeopardy;
 
 --Hvaða orð kemur oftast fyrir í svörum með 2 orð
