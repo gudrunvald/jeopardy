@@ -20,29 +20,45 @@ except psycopg2.OperationalError as e:
     print('Error message: ', e)
     exit()
 
-cursor = conn.cursor()
+cursor_q = conn.cursor()
+cursor_a = conn.cursor()
 
 questionSet = set()
 questionsList = []
 
+answerSet = set()
+answerList = []
+
 #206406
-for item in range(2, 206406):
-    s = """select id, question from jeopardy where id=""" + str(item) + """;"""
-    query = cursor.mogrify(s)
-    cursor.execute(query)
+for item in range(2, 20):
+    q = """select id, question from jeopardy where id=""" + str(item) + """;"""
+    a = """select id, answer from jeopardy where id=""" + str(item) + """;"""
+
+    query_q = cursor_q.mogrify(q)
+    query_a = cursor_a.mogrify(a)
+
+    cursor_q.execute(query_q)
+    cursor_a.execute(query_a)
+
 
     try:
-        records = cursor.fetchall()
-        for i in records:
+        questions = cursor_q.fetchall()
+        answers = cursor_a.fetchall()
+
+        for i in questions:
             questionSet.add(i)
+        for i in answers:
+            answerSet.add(i)
     except:
         print('no records')
 
 conn.commit()
-cursor.close()
+cursor_q.close()
+cursor_a.close()
 conn.close()
 #################
 
+# hér notuðum við pandas til að byrja með en enduðum á að sleppa því og lesa beint inn úr gagnagrunni:
 #data = pd.read_csv("jeopardy_first_1000.csv", engine='python', encoding="utf8")
 #pd.set_option('display.max_colwidth', 40) # til ad birta spurningarnar í heild
 #pd.set_option('display.max_rows', 250000) # til ad birta allar línur en ekki bara fyrstu og sídustu
@@ -58,9 +74,23 @@ for index in tempList:
         if tag[1] == 'NN' or tag[1] == 'NNS':
             questionsList.append((index[0], tag[0]))
 
-with open("out.csv","w") as g:
+with open("out_questions.csv","w") as g:
     wr = csv.writer(g,delimiter=";")
     for value in questionsList:
         wr.writerow(value)
 
-f.close()
+tempList = list(answerSet)
+# sækir nafnliði, svo nafnorð
+for index in tempList:
+    item = index[1].lower()
+    rowblob = tb(item)
+    for word in rowblob.noun_phrases:
+        answerList.append((index[0], word))
+    for tag in rowblob.tags:
+        if tag[1] == 'NN' or tag[1] == 'NNS':
+            answerList.append((index[0], tag[0]))
+
+with open("out_answers.csv","w") as g:
+    wr = csv.writer(g,delimiter=";")
+    for value in answerList:
+        wr.writerow(value)
