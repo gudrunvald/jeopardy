@@ -24,8 +24,7 @@ from jeopardy
 where question like '%Iceland%';
 
 
--- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
--- Guðrún 0.711
+-- Hlutfallið milli Íslands og Danmerkur
 select (select count(question)
 from jeopardy
 where question like '%Iceland%')/(SELECT count(question)
@@ -33,8 +32,6 @@ from jeopardy
 where question like '%Denmark%')::float;
 
 -- Fjöldi frægra karla og kvenna 
--- Ingimar: karlar = 16.277, konur = 7488
--- Guðrún karlar = 16254, konur = 7477
 SELECT (select count(gender)
 FROM persons
 WHERE gender like '%male%') as Males,
@@ -43,27 +40,17 @@ from persons
 where gender like '%female%') as Females;
 
 --- Listi af spurningum að virði 2000, 
--- Ingimar: 12.828
 select question, valueindollars
 from jeopardy
 where valueindollars = 2000
 GROUP BY question, valueindollars;
 
---- Spurningar með gap, Ingimar: 852
+--- Spurningar með gap
 SELECT question
 from jeopardy
 WHERE question LIKE '%\_\_\_\_%';
 
 --- Fjöldi spurninga um Norðurlöndin
-/*
-Ingimar:
-Ísland: 86
-Danmörk: 147
-Finnland: 76
-Svíðþjóð: 138
-Noregur: 136
-Færeyjar: 3
-*/
 SELECT
   count(*) FILTER (WHERE question like '%Iceland%' OR answer LIKE '%Iceland%') as Iceland
 , count(*) FILTER (WHERE question like '%Denmark%' OR answer LIKE '%Denmark%') as Denmark
@@ -74,7 +61,6 @@ SELECT
 FROM jeopardy;
 
 --Hvaða orð kemur oftast fyrir í svörum með 2 orð
--- Ingimar: New york
 SELECT answernoun, count(answernoun)
 FROM answernouns
 WHERE answernoun like '% %'
@@ -82,22 +68,12 @@ GROUP BY answernoun
 ORDER BY count(answernoun) DESC;
 
 --Hvaða orð kemur oftast fyrir í svörum með 1 orð
--- Ingimar John
 SELECT answernoun, count(answernoun)
 FROM answernouns
 GROUP BY answernoun
 ORDER BY count(answernoun) DESC;
 
---Hvaða orð kemur oftast fyrir í spurningum með 2 orð
--- Á ekki við, spurning um að sleppa
-SELECT questionnoun, count(questionnoun)
-FROM questionnouns
-WHERE questionnoun like '% %'
-GROUP BY questionnoun
-ORDER BY count(questionnoun) DESC; 
-
 --Hvaða orð kemur oftast fyrir í spurningum með 1 orð
--- Ingimar: name
 SELECT questionnoun, count(questionnoun)
 FROM questionnouns
 GROUP BY questionnoun
@@ -108,38 +84,34 @@ SELECT * FROM jeopardy;
 SELECT * FROM categories;
 
 -- Allar spurningar um Ísland
--- Ingimar: fyrsta row: "This bird was not ..."
 SELECT question, answer, categories
 FROM jeopardy
 WHERE lower(question) LIKE '%iceland%'
 OR lower(answer) LIKE '%iceland%';
 
 -- Flestar spurningarnar voru 05/04/2000
--- Ingimar: 19/05/1997 og 13/11/2007 og count er 62
 SELECT airdate, count(airdate)
 FROM jeopardy
 GROUP BY airdate
 ORDER BY count(airdate) DESC;
 
--- Ingimar: fyrsta row: "In an 1864 letter, ..."
+-- Spurningar sem voru spurðar 05/04/2000
 SELECT question, airdate
 FROM jeopardy
 WHERE airdate = '05/04/2000';
 
 -- Færeyjar
--- Ingimar: fyrsta row: "from their name, ..."
 SELECT question, answer, categories
 from jeopardy
 WHERE lower(question) LIKE '%faroe islands%'
 OR lower(answer) LIKE '%faroe islands%';
 
 ------------ PERSÓNUR ------------
--- Ingimar: fyrsta row: \weird_al\"_yankovich"
 SELECT * FROM persons
 GROUP BY person
 ORDER BY person;
 
---Ingimar: 8789
+-- Hversu margar spurningar um karlkynið
 SELECT count(gender)
 FROM persons
 WHERE gender = 'male';
@@ -148,7 +120,6 @@ WHERE gender = 'male';
 DELETE FROM jeopardy WHERE question LIKE '%<a href%';
 
 -- Öll svör sem innihalda fræga persónu
--- Ingimar: fyrsta row: "Cher, she starred... oscar... 800"
 SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
@@ -176,14 +147,12 @@ OR a.question LIKE (
 ORDER BY a.answer;
 
 -- Öll svör sem innihalda karlkyns fræga persónu
--- Ingimar: fyrsta row: "Liberace, this colorful..., MAY, 200"
 SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE person LIKE a.answer AND gender = 'male');
 
 -- Öll svör sem innihalda kvenkyns fræga persónu
--- Ingimar: fyrsta row: "Cher, she starred... oscar... 800"
 SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
@@ -195,7 +164,6 @@ FROM persons
 WHERE lower(person) LIKE '%morgan freeman%';
 
 -- Meðalvirði svars fyrir ákveðinn einstakling
--- Ingimar: 561.11
 SELECT avg(valueindollars) AS Average_value_for_this_person
 FROM jeopardy
 WHERE answer LIKE (SELECT person
@@ -208,48 +176,29 @@ FROM jeopardy v
 WHERE lower(v.answer) LIKE '%meryl streep%';
 
 -- Persóna og virði
--- Ingimar: 525
 SELECT avg(valueindollars)
 FROM jeopardy
 WHERE lower(answer) LIKE '%meryl streep%';
 
--- Meðalvirði svara fyrir karlkyns leikara
--- Ingimar: fæ error
--- Margrét: fæ ERROR!!!!!!!!!
-SELECT avg(valueindollars) AS Average_value_for_morgan_freeman
-FROM jeopardy
-WHERE answer LIKE (SELECT person
-  FROM persons
-  WHERE lower(gender) = 'male');
-
 -- Meðalvirði svara sem innihalda fræga persónu er 
--- Guðrún: 619.962 
--- Ingimar: 587.5
---- Margrét: 587,5
 SELECT avg(a.valueindollars)
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE p.person LIKE a.answer);
 
 -- Meðalverð fyrir fræga karlmenn er 
--- Guðrún: 617.450
--- Ingimar: 647.619
--- Margrét: 647.619
 SELECT avg(a.valueindollars)
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE p.person LIKE a.answer AND p.gender = 'male');
 
 -- Meðalverð fyrir frægar konur er 
--- Guðrún: 623.419
--- Ingimar: 562.745
 SELECT avg(a.valueindollars)
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE p.person LIKE a.answer AND p.gender = 'female');
 
 -- Finna svör sem eru ártöl
--- Ingimar: fyrsta row: indonesian; he's only ...
 SELECT question, (answer)::INT
 FROM jeopardy
 WHERE lower(question) LIKE '%year%'
@@ -257,8 +206,6 @@ AND jeopardy.answer ~* '^-?[1-9]\d*$'
 ORDER BY answer;
 
 -- Algengustu ártölin
--- Ingimar: 2000
--- Margrét: 2000
 SELECT (answer)::INT, count(answer)
 FROM jeopardy
 WHERE lower(question) LIKE '%year%'
@@ -305,22 +252,13 @@ from creeps;
 select count(name)
 from creeps;
 
---- Hversu margar spurningar eru um hvern perra
----ATHUGA FÆ ÞETTA EKKI RÉTT GETUR EINHVER HJÁLPAÐ MÉR
-select c.name as Creeps_in_question, j.question, count(j.question)
-from creeps c, jeopardy j
-where c.name like (select j.question from jeopardy j
-where question like c.name)
-group by j.question, c.name;
-
 -- Meðalvirði svara sem innihalda creep er
--- 721.970
 SELECT avg(a.valueindollars)
 FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.name FROM creeps p
 WHERE p.name LIKE a.answer);
 
--- Leita að creeps í svörum og spurningum - virkar
+-- Leita að creeps í svörum og spurningum
 SELECT j.answer, j.question, j.categories, j.valueindollars
 FROM jeopardy j
 WHERE j.answer LIKE (
@@ -333,7 +271,6 @@ OR j.question LIKE (
   WHERE a.name LIKE j.question);
 
 -- Algengustu creepin
--- Guðrún: Sylvester Stallone	22
 SELECT answer, count(answer)
 FROM jeopardy
 WHERE answer LIKE (
