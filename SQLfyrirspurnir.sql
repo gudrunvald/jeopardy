@@ -14,6 +14,15 @@ select count(question)
 from jeopardy
 where question like '%Iceland%';
 
+--- Fjöldi spurninga um Ísland og Danmörk
+select count(question)
+from jeopardy
+where question like '%Denmark%'
+UNION
+select count(question)
+from jeopardy
+where question like '%Iceland%';
+
 
 -- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
 select (select count(question)
