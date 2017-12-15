@@ -25,6 +25,7 @@ where question like '%Iceland%';
 
 
 -- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
+-- Guðrún 0.711
 select (select count(question)
 from jeopardy
 where question like '%Iceland%')/(SELECT count(question)
@@ -33,6 +34,7 @@ where question like '%Denmark%')::float;
 
 -- Fjöldi frægra karla og kvenna 
 -- Ingimar: karlar = 16.277, konur = 7488
+-- Guðrún karlar = 16254, konur = 7477
 SELECT (select count(gender)
 FROM persons
 WHERE gender like '%male%') as Males,
@@ -152,6 +154,27 @@ FROM jeopardy a
 WHERE a.answer LIKE (SELECT p.person FROM persons p
 WHERE person LIKE a.answer);
 
+-- Öll svör og spurningar sem innihalda fræga persónu
+SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
+FROM jeopardy a
+WHERE a.answer LIKE 
+(SELECT p.person FROM persons p
+WHERE person LIKE a.answer)
+OR a.question LIKE 
+(SELECT p2.person FROM persons p2
+WHERE person LIKE a.question);
+
+-- Öll svör og spurningar sem innihalda fræga persónu (create view til að geta leitað í því)
+CREATE VIEW famous_qa AS
+SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.person FROM persons p
+WHERE person LIKE a.answer)
+OR a.question LIKE (
+  SELECT p2.person FROM persons p2
+  WHERE person LIKE a.question)
+ORDER BY a.answer;
+
 -- Öll svör sem innihalda karlkyns fræga persónu
 -- Ingimar: fyrsta row: "Liberace, this colorful..., MAY, 200"
 SELECT a.answer AS Celeb_in_answer, a.question, a.categories, a.valueindollars
@@ -249,12 +272,13 @@ FROM jeopardy
 WHERE lower(answer) LIKE '%leif ericson%'
 OR lower(question) LIKE '%leif ericson%';
 
--- Algengustu persónurnar
-SELECT (answer)::INT, count(answer)
+-- Algengustu leikararnir
+SELECT answer, count(answer)
 FROM jeopardy
-WHERE lower(question) LIKE '%year%'
-AND answer ~*'^-?[1-9]\d*$'
-GROUP BY answer
+WHERE answer LIKE (
+  SELECT p.person FROM persons p
+  WHERE p.person LIKE jeopardy.answer)
+GROUP BY jeopardy.answer
 ORDER BY count(answer) DESC;
 
 -- Öll svör og spurningar sem innihalda fræga persónu
@@ -289,4 +313,31 @@ where c.name like (select j.question from jeopardy j
 where question like c.name)
 group by j.question, c.name;
 
+-- Meðalvirði svara sem innihalda creep er
+-- 721.970
+SELECT avg(a.valueindollars)
+FROM jeopardy a
+WHERE a.answer LIKE (SELECT p.name FROM creeps p
+WHERE p.name LIKE a.answer);
 
+-- Leita að creeps í svörum og spurningum - virkar
+SELECT j.answer, j.question, j.categories, j.valueindollars
+FROM jeopardy j
+WHERE j.answer LIKE (
+  SELECT a.name
+  FROM creeps a
+  WHERE a.name LIKE j.answer)
+OR j.question LIKE (
+  SELECT a.name
+  FROM creeps a
+  WHERE a.name LIKE j.question);
+
+-- Algengustu creepin
+-- Guðrún: Sylvester Stallone	22
+SELECT answer, count(answer)
+FROM jeopardy
+WHERE answer LIKE (
+  SELECT p.name FROM creeps p
+  WHERE name LIKE jeopardy.answer)
+GROUP BY jeopardy.answer
+ORDER BY count(answer) DESC;

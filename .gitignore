@@ -3,6 +3,7 @@
 
 # Files and folders to ignore
 Annað/
+__pycache__/
 
 ### macOS ###
 *.DS_Store
