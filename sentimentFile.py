@@ -4,9 +4,9 @@ import psycopg2
 import connectToDB
 
 host = 'localhost'
-dbname = 'storaverkefnid'   	#Setjið inn ykkar dbname 
-user = 'postgres'           	#Setjið inn ykkar username
-password = '?????????'     		#Setjið inn ykkar password
+dbname = 'hopverk'   	#Setjið inn ykkar dbname 
+user = ''           	#Setjið inn ykkar username
+password = ''     		#Setjið inn ykkar password
 
 
 def csvReader():
@@ -14,7 +14,6 @@ def csvReader():
     returnList = []
     counter = 0
     for row in text:
-        #tempTuple = row[0].split(";")
         returnList.append(row)
     return returnList
 
@@ -25,7 +24,7 @@ cursor, conn = connectToDB.connect_to_database(host, dbname, user, password)
 myList = csvReader()
 print(myList[0][0])
 
-numberOfRowsToInsert = 1000
+numberOfRowsToInsert = 2000
 counter = 0
 insertString = "insert into creeps (name) values "
 values = ''
