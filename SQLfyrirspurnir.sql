@@ -14,8 +14,6 @@ select count(question)
 from jeopardy
 where question like '%Iceland%';
 
--- AUKA KOMMENT
-
 --- Fjöldi spurninga um Ísland og Danmörk
 select count(question)
 from jeopardy
