@@ -359,3 +359,9 @@ SELECT jeopardy.question, subjectivity
 FROM sentiments, jeopardy 
 WHERE sentiments.subjectivity < 0.2
 AND sentiments.id = jeopardy.id;
+
+-- Algengustu categeries
+SELECT categories, count(categories)
+FROM jeopardy
+GROUP BY categories
+ORDER BY count(categories) DESC;
