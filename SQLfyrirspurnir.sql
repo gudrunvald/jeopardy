@@ -5,6 +5,16 @@ WHERE airdate ~* '[0-9][0-9]/[0-9][0-9]/*'
 GROUP BY airdate
 ORDER BY substring(airdate, 6, 9);
 
+--- Fjöldi spurninga um Ísland og Danmörk
+select count(question)
+from jeopardy
+where question like '%Denmark%'
+UNION
+select count(question)
+from jeopardy
+where question like '%Iceland%';
+
+
 -- Hlutfallið milli Íslands og Danmerkur Ingimar: 0.585
 select (select count(question)
 from jeopardy
